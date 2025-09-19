@@ -25,7 +25,7 @@ menuItems.forEach(item => {
 document.querySelector('.nav_gnb02').addEventListener('mouseleave', () => {
     descItems.forEach(desc => {
         desc.classList.remove('active');
-        desc.classList.remove('tall'); // 🔥 tall도 초기화
+        desc.classList.remove('tall'); 
     });
 });
 
