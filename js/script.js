@@ -86,8 +86,8 @@ window.addEventListener("DOMContentLoaded", () => {
                 speed: 600
             },
             1024: {
-                slidesPerView: 3,
-                slidesPerGroup: 3,
+                slidesPerView: 1,
+                slidesPerGroup: 1,
                 speed: 900
             }
         }
@@ -212,21 +212,19 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // header 스크롤 반응형 버전
-document.addEventListener("DOMContentLoaded", () => {
-    const headerWrap = document.querySelector(".header");
-    let lastScroll = 0;
+const header = document.querySelector('.header');
+let lastScroll = 0;
 
-    window.addEventListener("scroll", () => {
-        const currentScroll = window.scrollY;
+function onScroll() {
+    const y = window.scrollY;
 
-        if (currentScroll > lastScroll && currentScroll > 50) {
-            // 🔽 스크롤 내릴 때 → header_wrap 숨기기
-            headerWrap.classList.add("hide");
-        } else {
-            // 🔼 스크롤 올릴 때 → header_wrap 다시 보이기
-            headerWrap.classList.remove("hide");
-        }
+    if (y > lastScroll && y > 50) {
+        header.classList.add('shrink');
+    } else {
+        header.classList.remove('shrink');
+    }
 
-        lastScroll = currentScroll;
-    });
-});
+    lastScroll = y;
+}
+
+window.addEventListener('scroll', onScroll);
