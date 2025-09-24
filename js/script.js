@@ -25,7 +25,7 @@ menuItems.forEach(item => {
 document.querySelector('.nav_gnb02').addEventListener('mouseleave', () => {
     descItems.forEach(desc => {
         desc.classList.remove('active');
-        desc.classList.remove('tall'); 
+        desc.classList.remove('tall');
     });
 });
 
@@ -45,9 +45,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     function onScroll() {
+        if (window.innerWidth < 1025) return;
         const y = window.scrollY || document.documentElement.scrollTop;
-        header.classList.toggle('shrink', y > 20);  
-        setHeaderOffset();                          
+        header.classList.toggle('shrink', y > 20);
+        setHeaderOffset();
     }
 
     window.addEventListener('load', () => { setHeaderOffset(); onScroll(); });
@@ -72,6 +73,24 @@ window.addEventListener("DOMContentLoaded", () => {
         },
         loop: true,
         speed: 900,
+
+        breakpoints: {
+            0: {
+                slidesPerView: 1,
+                slidesPerGroup: 1,
+                speed: 400
+            },
+            768: {
+                slidesPerView: 1,
+                slidesPerGroup: 1,
+                speed: 600
+            },
+            1024: {
+                slidesPerView: 3,
+                slidesPerGroup: 3,
+                speed: 900
+            }
+        }
     });
 
     document.querySelector(".btn-next").addEventListener("click", () => {
@@ -91,6 +110,17 @@ document.addEventListener("DOMContentLoaded", function () {
             nextEl: ".swiper-button-next2",
             prevEl: ".swiper-button-prev2",
         },
+        breakpoints: {
+            0: {
+                spaceBetween: 16
+            },
+            768: {
+                spaceBetween: 16
+            },
+            1024: {
+                spaceBetween: 16
+            }
+        }
     });
 });
 
@@ -123,48 +153,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // section5
 document.addEventListener('DOMContentLoaded', () => {
-  const section = document.querySelector('.hot-keyword');              
-  const left    = document.querySelector('.hot-keyword_left');         
-  const rows    = Array.from(document.querySelectorAll('.hot-keyword_right li')); 
+    const section = document.querySelector('.hot-keyword');
+    const left = document.querySelector('.hot-keyword_left');
+    const rows = Array.from(document.querySelectorAll('.hot-keyword_right li'));
 
 
-  function animateLeft(duration = 500){
-    if (!left) return Promise.resolve();
-    left.classList.add('is-left');
-    return new Promise(res => setTimeout(res, duration));
-  }
+    function animateLeft(duration = 500) {
+        if (!left) return Promise.resolve();
+        left.classList.add('is-left');
+        return new Promise(res => setTimeout(res, duration));
+    }
 
 
-  function animateRow(row, perItemDelay = 50, wipeDuration = 350){
-    return new Promise(res => {
-      
-      row.classList.add('is-row');
+    function animateRow(row, perItemDelay = 50, wipeDuration = 350) {
+        return new Promise(res => {
 
-      
-      const pills = Array.from(row.querySelectorAll('a.keyword-point'));
-      pills.forEach((el, i) => {
-        setTimeout(() => el.classList.add('is-wiped'), i * perItemDelay);
-      });
+            row.classList.add('is-row');
 
-      
-      const total = (Math.max(pills.length - 1, 0) * perItemDelay) + wipeDuration;
-      setTimeout(res, total);
+
+            const pills = Array.from(row.querySelectorAll('a.keyword-point'));
+            pills.forEach((el, i) => {
+                setTimeout(() => el.classList.add('is-wiped'), i * perItemDelay);
+            });
+
+
+            const total = (Math.max(pills.length - 1, 0) * perItemDelay) + wipeDuration;
+            setTimeout(res, total);
+        });
+    }
+
+    async function runSequence() {
+        await animateLeft();
+        for (const row of rows) {
+            await animateRow(row);
+        }
+    }
+
+    const io = new IntersectionObserver((entries, obs) => {
+        if (entries.some(e => e.isIntersecting)) {
+            obs.disconnect();
+            runSequence();
+        }
+    }, { threshold: 0.2 });
+
+    if (section) io.observe(section); else runSequence();
+});
+
+// header 메뉴버튼 반응형 버전 
+document.addEventListener("DOMContentLoaded", () => {
+    const items = document.querySelectorAll(".mo-gnb li");
+
+    items.forEach((item) => {
+        item.addEventListener("click", () => {
+            items.forEach((el) => el.classList.remove("active"));
+            item.classList.add("active");
+        });
     });
-  }
+});
 
-  async function runSequence(){
-    await animateLeft();            
-    for (const row of rows){        
-      await animateRow(row);
-    }
-  }
+// header 스크롤 반응형 버전
+document.addEventListener("DOMContentLoaded", () => {
+    const headerWrap = document.querySelector(".header");
+    let lastScroll = 0;
 
-  const io = new IntersectionObserver((entries, obs) => {
-    if (entries.some(e => e.isIntersecting)) {
-      obs.disconnect(); 
-      runSequence();
-    }
-  }, { threshold: 0.2 });
+    window.addEventListener("scroll", () => {
+        const currentScroll = window.scrollY;
 
-  if (section) io.observe(section); else runSequence();
+        if (currentScroll > lastScroll && currentScroll > 50) {
+            // 🔽 스크롤 내릴 때 → header_wrap 숨기기
+            headerWrap.classList.add("hide");
+        } else {
+            // 🔼 스크롤 올릴 때 → header_wrap 다시 보이기
+            headerWrap.classList.remove("hide");
+        }
+
+        lastScroll = currentScroll;
+    });
 });
