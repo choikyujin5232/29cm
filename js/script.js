@@ -85,9 +85,14 @@ window.addEventListener("DOMContentLoaded", () => {
                 slidesPerGroup: 1,
                 speed: 600
             },
-            1024: {
+            1023: {  
                 slidesPerView: 1,
                 slidesPerGroup: 1,
+                speed: 600
+            },
+            1025: {
+                slidesPerView: 3,
+                slidesPerGroup: 3,
                 speed: 900
             }
         }
